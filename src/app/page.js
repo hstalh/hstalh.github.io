@@ -1,69 +1,94 @@
-import Image from "next/image";
+"use client";
+
+import { useMemo, useState } from "react";
 import styles from "./page.module.css";
 
+const DIRECTIONS = ["Left", "Center", "Right"];
+const MAX_SHOTS = 5;
+
+function randomDirection() {
+  return DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+}
+
 export default function Home() {
+  const [shotsTaken, setShotsTaken] = useState(0);
+  const [playerScore, setPlayerScore] = useState(0);
+  const [cpuScore, setCpuScore] = useState(0);
+  const [lastRound, setLastRound] = useState("");
+
+  const isFinished = shotsTaken >= MAX_SHOTS;
+
+  const resultText = useMemo(() => {
+    if (!isFinished) {
+      return `Choose your shot direction. Round ${shotsTaken + 1} of ${MAX_SHOTS}.`;
+    }
+
+    if (playerScore > cpuScore) return "You win the shootout! 🏆";
+    if (cpuScore > playerScore) return "CPU wins the shootout!";
+    return "It's a draw after 5 shots each!";
+  }, [cpuScore, isFinished, playerScore, shotsTaken]);
+
+  const playRound = (shotDirection) => {
+    if (isFinished) return;
+
+    const cpuGoalie = randomDirection();
+    const playerScored =
+      shotDirection !== cpuGoalie ? Math.random() < 0.85 : Math.random() < 0.15;
+
+    const cpuShot = randomDirection();
+    const yourGoalie = randomDirection();
+    const cpuScored =
+      cpuShot !== yourGoalie ? Math.random() < 0.75 : Math.random() < 0.1;
+
+    setPlayerScore((score) => score + (playerScored ? 1 : 0));
+    setCpuScore((score) => score + (cpuScored ? 1 : 0));
+    setShotsTaken((value) => value + 1);
+
+    setLastRound(
+      `You shot ${shotDirection} (${playerScored ? "GOAL" : "SAVED by CPU diving " + cpuGoalie}). CPU shot ${cpuShot} (${cpuScored ? "GOAL" : "SAVED"}).`
+    );
+  };
+
+  const reset = () => {
+    setShotsTaken(0);
+    setPlayerScore(0);
+    setCpuScore(0);
+    setLastRound("");
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
+    <main className={styles.page}>
+      <section className={styles.card}>
+        <h1>Bandy Shootout</h1>
+        <p className={styles.subtitle}>Best of 5 shots each</p>
+
+        <div className={styles.scoreboard}>
+          <p>You: {playerScore}</p>
+          <p>CPU: {cpuScore}</p>
           <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+            Shots: {shotsTaken}/{MAX_SHOTS}
           </p>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <p className={styles.status}>{resultText}</p>
+        {lastRound && <p className={styles.round}>{lastRound}</p>}
+
+        <div className={styles.actions}>
+          {DIRECTIONS.map((direction) => (
+            <button
+              key={direction}
+              onClick={() => playRound(direction)}
+              disabled={isFinished}
+            >
+              Shoot {direction}
+            </button>
+          ))}
         </div>
-      </main>
-    </div>
+
+        <button className={styles.reset} onClick={reset}>
+          Restart Game
+        </button>
+      </section>
+    </main>
   );
 }
