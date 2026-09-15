@@ -1,0 +1,83 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(160deg, #0a2b4f, #11476d);
+}
+
+.card {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #0d1b2a;
+  padding: 28px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+}
+
+.card h1 {
+  font-size: 2rem;
+}
+
+.subtitle {
+  margin-top: 4px;
+  color: #4b5f72;
+}
+
+.scoreboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 16px;
+  font-weight: 700;
+}
+
+.status {
+  margin-top: 20px;
+  font-size: 1.05rem;
+}
+
+.round {
+  margin-top: 10px;
+  color: #24384d;
+  line-height: 1.5;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.actions button,
+.reset {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.actions button {
+  background: #0f6db8;
+  color: #fff;
+}
+
+.actions button:hover:not(:disabled) {
+  background: #0d5f9f;
+}
+
+.actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.reset {
+  margin-top: 14px;
+  width: 100%;
+  background: #dfe8f2;
+  color: #0d1b2a;
+}
