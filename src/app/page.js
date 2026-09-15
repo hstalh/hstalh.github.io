@@ -6,8 +6,14 @@ import styles from "./page.module.css";
 const DIRECTIONS = ["Left", "Center", "Right"];
 const MAX_SHOTS = 5;
 
+function randomUnit() {
+  const values = new Uint32Array(1);
+  crypto.getRandomValues(values);
+  return values[0] / 4294967296;
+}
+
 function randomDirection() {
-  return DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+  return DIRECTIONS[Math.floor(randomUnit() * DIRECTIONS.length)];
 }
 
 export default function Home() {
@@ -33,12 +39,12 @@ export default function Home() {
 
     const cpuGoalie = randomDirection();
     const playerScored =
-      shotDirection !== cpuGoalie ? Math.random() < 0.85 : Math.random() < 0.15;
+      shotDirection !== cpuGoalie ? randomUnit() < 0.85 : randomUnit() < 0.15;
 
     const cpuShot = randomDirection();
     const yourGoalie = randomDirection();
     const cpuScored =
-      cpuShot !== yourGoalie ? Math.random() < 0.75 : Math.random() < 0.1;
+      cpuShot !== yourGoalie ? randomUnit() < 0.75 : randomUnit() < 0.1;
 
     setPlayerScore((score) => score + (playerScored ? 1 : 0));
     setCpuScore((score) => score + (cpuScored ? 1 : 0));
