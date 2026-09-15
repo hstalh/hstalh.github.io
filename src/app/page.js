@@ -21,6 +21,12 @@ export default function Home() {
   const [playerScore, setPlayerScore] = useState(0);
   const [cpuScore, setCpuScore] = useState(0);
   const [lastRound, setLastRound] = useState("");
+  const [roundScene, setRoundScene] = useState({
+    shotDirection: "Center",
+    goalieDirection: "Center",
+    playerScored: null,
+    round: 0,
+  });
 
   const isFinished = shotsTaken >= MAX_SHOTS;
 
@@ -33,6 +39,18 @@ export default function Home() {
     if (cpuScore > playerScore) return "CPU wins the shootout!";
     return "It's a draw after 5 shots each!";
   }, [cpuScore, isFinished, playerScore, shotsTaken]);
+
+  const playerMood = useMemo(() => {
+    if (isFinished) {
+      if (playerScore > cpuScore) return { face: "😄", text: "Celebrating the win!" };
+      if (playerScore < cpuScore) return { face: "😭", text: "Heartbroken after the loss." };
+      return { face: "😐", text: "Tough draw. No winner today." };
+    }
+
+    if (roundScene.playerScored === true) return { face: "😎", text: "Great strike!" };
+    if (roundScene.playerScored === false) return { face: "😠", text: "Missed chance!" };
+    return { face: "😤", text: "Ready to shoot." };
+  }, [cpuScore, isFinished, playerScore, roundScene.playerScored]);
 
   const playRound = (shotDirection) => {
     if (isFinished) return;
@@ -49,6 +67,12 @@ export default function Home() {
     setPlayerScore((score) => score + (playerScored ? 1 : 0));
     setCpuScore((score) => score + (cpuScored ? 1 : 0));
     setShotsTaken((value) => value + 1);
+    setRoundScene({
+      shotDirection,
+      goalieDirection: cpuGoalie,
+      playerScored,
+      round: shotsTaken + 1,
+    });
 
     setLastRound(
       `You shot ${shotDirection} (${playerScored ? "GOAL" : "SAVED by CPU diving " + cpuGoalie}). CPU shot ${cpuShot} (${cpuScored ? "GOAL" : "SAVED"}).`
@@ -60,6 +84,12 @@ export default function Home() {
     setPlayerScore(0);
     setCpuScore(0);
     setLastRound("");
+    setRoundScene({
+      shotDirection: "Center",
+      goalieDirection: "Center",
+      playerScored: null,
+      round: 0,
+    });
   };
 
   return (
@@ -77,6 +107,13 @@ export default function Home() {
         </div>
 
         <p className={styles.status}>{resultText}</p>
+        <section className={styles.pitch} key={roundScene.round}>
+          <div className={styles.goalFrame} />
+          <div className={`${styles.keeper} ${styles[`dive${roundScene.goalieDirection}`]}`}>🥅🧤</div>
+          <div className={`${styles.ball} ${styles[`shot${roundScene.shotDirection}`]}`}>🔵</div>
+          <div className={styles.player}>🏒 {playerMood.face}</div>
+        </section>
+        <p className={styles.reaction}>{playerMood.text}</p>
         {lastRound && <p className={styles.round}>{lastRound}</p>}
 
         <div className={styles.actions}>

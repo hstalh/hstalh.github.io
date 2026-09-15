@@ -39,6 +39,84 @@
   font-size: 1.05rem;
 }
 
+.pitch {
+  position: relative;
+  overflow: hidden;
+  margin-top: 16px;
+  height: 180px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #b9e4ff 0%, #82c8f3 55%, #4aa365 55%, #39844f 100%);
+}
+
+.goalFrame {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  width: 220px;
+  height: 58px;
+  transform: translateX(-50%);
+  border: 4px solid #f7fbff;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  opacity: 0.85;
+}
+
+.keeper {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  font-size: 1.7rem;
+  transform: translateX(-50%);
+  animation: keeperDive 0.6s ease-out forwards;
+}
+
+.diveLeft {
+  --keeper-offset: -70px;
+}
+
+.diveCenter {
+  --keeper-offset: 0px;
+}
+
+.diveRight {
+  --keeper-offset: 70px;
+}
+
+.ball {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  font-size: 1.8rem;
+  transform: translateX(-50%);
+  animation: shotMove 0.7s ease-out forwards;
+}
+
+.shotLeft {
+  --shot-offset: -105px;
+}
+
+.shotCenter {
+  --shot-offset: 0px;
+}
+
+.shotRight {
+  --shot-offset: 105px;
+}
+
+.player {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-size: 1.55rem;
+}
+
+.reaction {
+  margin-top: 10px;
+  font-weight: 700;
+  color: #0e3150;
+}
+
 .round {
   margin-top: 10px;
   color: #24384d;
@@ -80,4 +158,24 @@
   width: 100%;
   background: #dfe8f2;
   color: #0d1b2a;
+}
+
+@keyframes shotMove {
+  from {
+    bottom: 40px;
+    transform: translateX(-50%) scale(1);
+  }
+  to {
+    bottom: 120px;
+    transform: translateX(calc(-50% + var(--shot-offset))) scale(0.8);
+  }
+}
+
+@keyframes keeperDive {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(calc(-50% + var(--keeper-offset)));
+  }
 }
